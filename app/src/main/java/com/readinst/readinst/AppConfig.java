@@ -10,5 +10,6 @@ public class AppConfig {
     public static final String db_pass = "l68Xw4x5PP";
     public static final String db_port = "3306";
     public static final String DRIVER = "com.mysql.jdbc.DRIVER";
-    public static final String TABLE_NAME = "ReadInstruments";
+    public static final String TABLE_DEVICES = "ReadInstruments";
+    public static final String TABLE_USERS = "ReadInstUsers";
 }
