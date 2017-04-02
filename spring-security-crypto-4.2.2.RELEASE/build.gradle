@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('spring-security-crypto-4.2.2.RELEASE.jar'))
