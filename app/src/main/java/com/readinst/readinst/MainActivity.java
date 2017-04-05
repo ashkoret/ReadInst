@@ -4,12 +4,16 @@ import android.os.Bundle;
 import 	android.os.StrictMode;
 import android.widget.Button;
 import android.view.View;
+import android.widget.TextView;
+
 import com.readinst.dbconnector.DBconnect;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button button;
+    Button LoginButton;
+    TextView UserEmail;
+    TextView Password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,14 +23,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(MainActivity.this);
+        LoginButton = (Button) findViewById(R.id.LoginButton);
+        LoginButton.setOnClickListener(MainActivity.this);
     }
 
     @Override
     public void onClick(View v) {
 
+        UserEmail = (TextView) findViewById(R.id.Email);
+        String Email = UserEmail.getText().toString();
+        Password = (TextView) findViewById(R.id.Password);
+        String Pass = Password.getText().toString();
+        // TODO implement login procedure
+
         DBconnect db_users = new DBconnect();
-        db_users.insertUser("el.rache@gmail.com","123123", BCrypt.gensalt(12),"27FA-AE34-1FC5-EECA-4E48-D19D-DFBA-4B68", AppConfig.TABLE_USERS);
+        db_users.insertUser(Email, Pass, BCrypt.gensalt(12),"27FA-AE34-1FC5-EECA-4E48-D19D-DFBA-4B68", AppConfig.TABLE_USERS);
     }
 }

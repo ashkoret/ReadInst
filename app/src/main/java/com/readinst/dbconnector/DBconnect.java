@@ -57,6 +57,15 @@ public class DBconnect {
         return result;
     }
 
+    public String readUser(String UserEmail, String UserPassword, String Table)
+    {
+       String Salt="";
+        // TODO Read the table and get user salt, if no user return salt="0";
+       return Salt;
+
+    }
+
+
     public HashMap<String, String> getUser(String UserEmail, String UserPassword)
     {
         HashMap<String, String> UserDevices = new HashMap<>();
