@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import android.util.Log;
 
 /**
@@ -27,7 +27,6 @@ public class DBconnect {
         {
             Class.forName(AppConfig.DRIVER);
             conn = DriverManager.getConnection(AppConfig.connectionString, AppConfig.db_user, AppConfig.db_pass);
-            //String just = "just";
         }
         catch(SQLException s)
         {
@@ -38,28 +37,30 @@ public class DBconnect {
             Log.e(TAG, c.getMessage());
         }
     }
-    public boolean insertUser(String UserEmail, String UserPassword, String Table)
+    public boolean insertUser(String UserEmail, String UserPassword, String UserSalt, String Dev,String Table)
     {
         boolean result = false;
-        try
-        {
-            PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Password) VALUES (?,?)");
-            st.setString(1,UserEmail);
-            st.setString(2,UserPassword);
-            result = st.execute();
-            st.close();
-        }
-        catch(SQLException s)
-        {
-            Log.e(TAG, s.getMessage());
+        String hashedPassword = BCrypt.hashpw(UserPassword,UserSalt);
+        if (conn!=null) {
+            try {
+                PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Password, Salt, Dev0) VALUES (?,?,?,?)");
+                st.setString(1, UserEmail);
+                st.setString(2, hashedPassword);
+                st.setString(3, UserSalt);
+                st.setString(4, Dev);
+                result = st.execute();
+                st.close();
+            } catch (SQLException s) {
+                Log.e(TAG, s.getMessage());
+            }
         }
         return result;
     }
 
     public HashMap<String, String> getUser(String UserEmail, String UserPassword)
     {
-        HashMap<String, String> UserDevices = new HashMap<String, String>();
-        String query = "SELECT * FROM " + AppConfig.TABLE_USERS + "WHERE Email = '"+ UserEmail +"' AND Password='" + UserPassword +"')";
+        HashMap<String, String> UserDevices = new HashMap<>();
+        String query = "SELECT * FROM " + AppConfig.TABLE_USERS + "WHERE Email = '"+ UserEmail +"' AND Password=PASSWORD('" + UserPassword +"')";
             try
             {
                 Statement st = conn.createStatement();
@@ -67,9 +68,8 @@ public class DBconnect {
                 if (rs.next())
                 {
                     UserDevices.put("Email", rs.getString("Email"));
+                    UserDevices.put("Salt", rs.getString("Salt"));
                     UserDevices.put("Dev0", rs.getString("Dev0"));
-                    UserDevices.put("Dev1", rs.getString("Dev1"));
-                    UserDevices.put("Dev2", rs.getString("Dev2"));
                 }
             }
             catch(SQLException s)
