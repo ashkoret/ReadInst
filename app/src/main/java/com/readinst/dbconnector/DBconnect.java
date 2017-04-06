@@ -57,7 +57,7 @@ public class DBconnect {
         return result;
     }
 
-    public String readUser(String UserEmail, String UserPassword, String Table)
+    public String checkUser(String UserEmail, String UserPassword, String Table)
     {
        String Salt="";
         // TODO Read the table and get user salt, if no user return salt="0";
@@ -66,18 +66,16 @@ public class DBconnect {
     }
 
 
-    public HashMap<String, String> getUser(String UserEmail, String UserPassword)
+    public HashMap<String, String> getUser(String UserEmail)
     {
         HashMap<String, String> UserDevices = new HashMap<>();
-        String query = "SELECT * FROM " + AppConfig.TABLE_USERS + "WHERE Email = '"+ UserEmail +"' AND Password=PASSWORD('" + UserPassword +"')";
+        String query = "SELECT * FROM " + AppConfig.TABLE_USERS + "WHERE Email = '"+ UserEmail +"')";
             try
             {
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
                 if (rs.next())
                 {
-                    UserDevices.put("Email", rs.getString("Email"));
-                    UserDevices.put("Salt", rs.getString("Salt"));
                     UserDevices.put("Dev0", rs.getString("Dev0"));
                 }
             }
