@@ -1,1 +1,1 @@
-include ':app', ':mysql-connector-java-5.1.41-bin', ':spring-security-crypto-4.2.2.RELEASE'
+include ':app', ':mysql-connector-java-5.1.41-bin', ':spring-security-crypto-4.2.2.RELEASE', ':rxjava-android-0.20.7'
