@@ -9,8 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import android.util.Log;
+import java.util.List;
+import java.util.Collections;
+
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
  * Created by dan on 02-04-17.
@@ -56,19 +59,68 @@ public class DBconnect {
         return result;
     }
 
-    public String checkUser(String UserEmail, String UserPassword, String Table)
+    public Boolean[] checkUser(String UserEmail, String UserPassword, String Table)
     {
-       String Salt="";
-        // TODO Read the table and get user salt, if no user return salt="0";
-       return Salt;
+        Boolean UserExists[] = {false, false};
+        String StoredPassword;
+        String StoredUserEmail;
+        if (conn!=null)
+        {
+            try
+            {
+                //TODO check this query
+                String query = "SELECT * FROM " + Table + "WHERE Email = '"+ UserEmail +"')";
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                if (rs.next()) {
+                    StoredUserEmail = rs.getString("Email");
+                    StoredPassword = rs.getString("Password");
+                    if (StoredPassword == UserPassword) {
+                        UserExists[1] = true;
+                    }
+                    if (StoredUserEmail == UserEmail) {
+                        UserExists[0] = true;
+                    }
+                }
+            }
+            catch (SQLException s)
+            {
+                Log.e(TAG, s.getMessage());
+            }
+        }
+        return UserExists;
+    }
+
+    public List<String> readUser(String UserEmail, String Table)
+    {
+       List<String> Devs = Collections.emptyList();
+        String Dev0;
+        if (conn!=null) {
+            try
+            {
+                String query = "SELECT * FROM " + Table + "WHERE Email = '" + UserEmail + "')";
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                if (rs.next())
+                {
+                    Dev0 = rs.getString("Dev0");
+                    Devs.add(Dev0);
+                }
+
+                // TODO Read the table and get Dev0
+            } catch (SQLException s) {
+                Log.e(TAG, s.getMessage());
+            }
+        }
+       return Devs;
 
     }
 
 
-    public HashMap<String, String> getUser(String UserEmail)
+    public HashMap<String, String> getUser(String UserEmail, String Table)
     {
         HashMap<String, String> UserDevices = new HashMap<>();
-        String query = "SELECT * FROM " + AppConfig.TABLE_USERS + "WHERE Email = '"+ UserEmail +"')";
+        String query = "SELECT * FROM " + Table + "WHERE Email = '"+ UserEmail +"')";
             try
             {
                 Statement st = conn.createStatement();

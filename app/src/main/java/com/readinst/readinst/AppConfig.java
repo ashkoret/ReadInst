@@ -13,5 +13,4 @@ public class AppConfig {
     public static final String TABLE_DEVICES = "ReadInstruments";
     public static final String TABLE_USERS = "ReadInstUsers";
     public static final String USR_FILE = "current.usr";
-
 }

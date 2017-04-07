@@ -11,6 +11,8 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import android.content.Intent;
+import java.util.Collections;
+import java.util.List;
 
 import com.readinst.dbconnector.DBconnect;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -100,25 +102,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 {
                   e.printStackTrace();
                 }
-            // TODO Pull the user from the DB and check the Dev0
-            // TODO In other words build the list of the Devs
-            // TODO using db_users.readuser method.
-            // TODO If non-existent, add the user.
+            connectAndPull(Email, HashedPassword, Salt, AppConfig.TABLE_USERS);
+            Intent intent = new Intent(this, Indicators.class);
+            startActivity(intent);
         }
 
         else {
             if (BCrypt.checkpw(TypedPassword, HashedPassword)) {
-                DBconnect db_users = new DBconnect();
 
-                // TODO Do the same block as above.
-                // TODO I.e. pull and check.
-
-                db_users.insertUser(Email, HashedPassword, Salt, "null", AppConfig.TABLE_USERS);
-
+                connectAndPull(Email, HashedPassword, Salt, AppConfig.TABLE_USERS);
                 Intent intent = new Intent(this, Indicators.class);
                 startActivity(intent);
             }
         }
 
+    }
+
+    public List<String> connectAndPull(String Email, String HashedPassword, String Salt, String Table)
+    {
+        List<String> AllDevs = Collections.emptyList();
+        DBconnect db_users = new DBconnect();
+        Boolean[] UserExits = db_users.checkUser(Email, HashedPassword, Table);
+        if (UserExits[1])
+        {
+           AllDevs = db_users.readUser(Email, Table);
+        }
+        else
+        {
+            db_users.insertUser(Email,HashedPassword,Salt,"null",Table);
+        }
+        return AllDevs;
     }
 }
