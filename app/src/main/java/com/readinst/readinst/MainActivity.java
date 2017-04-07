@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (((ReadString = br.readLine()) != null ) && ReadString.length() > 3)
                 {
                     String[] Credentials = ReadString.split("--");
-                    if (Credentials[0]!= null)
+                    if ((Credentials[0]!= null) && (Credentials.length == 3))
                     {
                         Email = Credentials[0];
                         HashedPassword = Credentials[1];
@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         UserEmail = (TextView) findViewById(R.id.Email);
                         UserEmail.setText(Email);
                         UserExists = true;
+                    }
+                    else
+                    {
+                       file.delete();
                     }
                 }
                 br.close();
@@ -69,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+
+    // TODO
+    // TODO implement login procedure
+    // TODO
 
     @Override
     public void onClick(View v) {
@@ -87,19 +95,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 writer.append(UserString);
                 writer.flush();
                 writer.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                }
+            catch (IOException e)
+                {
+                  e.printStackTrace();
+                }
+            // TODO Pull the user from the DB and check the Dev0
+            // TODO In other words build the list of the Devs
+            // TODO using db_users.readuser method.
+            // TODO If non-existent, add the user.
         }
-        // TODO implement login procedure
-        if(BCrypt.checkpw(TypedPassword,HashedPassword))
-        {
-            DBconnect db_users = new DBconnect();
-            db_users.insertUser(Email, HashedPassword, Salt,"null", AppConfig.TABLE_USERS);
 
-            Intent intent = new Intent(this, Indicators.class);
-            startActivity(intent);
+        else {
+            if (BCrypt.checkpw(TypedPassword, HashedPassword)) {
+                DBconnect db_users = new DBconnect();
+
+                // TODO Do the same block as above.
+                // TODO I.e. pull and check.
+
+                db_users.insertUser(Email, HashedPassword, Salt, "null", AppConfig.TABLE_USERS);
+
+                Intent intent = new Intent(this, Indicators.class);
+                startActivity(intent);
+            }
         }
 
     }
