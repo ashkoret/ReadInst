@@ -8,6 +8,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileWriter;
+import android.content.Intent;
 
 import com.readinst.dbconnector.DBconnect;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         DBconnect db_users = new DBconnect();
         db_users.insertUser(Email, Pass, BCrypt.gensalt(12),"null", AppConfig.TABLE_USERS);
+
+        Intent intent = new Intent(this, Indicators.class);
+        startActivity(intent);
 
     }
 }
