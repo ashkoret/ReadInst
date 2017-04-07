@@ -8,6 +8,8 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import android.content.Intent;
 
 import com.readinst.dbconnector.DBconnect;
@@ -17,7 +19,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Button LoginButton;
     TextView UserEmail;
-    TextView Password;
+    TextView UserPassword;
+    String UsrFilename = AppConfig.USR_FILE;
+    String Email = "";
+    String HashedPassword = "";
+    String Salt = "";
+    Boolean UserExists = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,33 +36,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         LoginButton = (Button) findViewById(R.id.LoginButton);
         LoginButton.setOnClickListener(MainActivity.this);
+
+        try {
+            File file = new File(this.getFilesDir(), UsrFilename);
+            // Check file exists and read the stuff from file
+            if (file.exists()) {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String ReadString;
+                if (((ReadString = br.readLine()) != null ) && ReadString.length() > 3)
+                {
+                    String[] Credentials = ReadString.split("--");
+                    if (Credentials[0]!= null)
+                    {
+                        Email = Credentials[0];
+                        HashedPassword = Credentials[1];
+                        Salt =  Credentials[2];
+                        UserEmail = (TextView) findViewById(R.id.Email);
+                        UserEmail.setText(Email);
+                        UserExists = true;
+                    }
+                }
+                br.close();
+                // TODO Read file
+                // Intent intent = new Intent(this, Indicators.class);
+                // startActivity(intent);
+            }
+        }
+
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void onClick(View v) {
         UserEmail = (TextView) findViewById(R.id.Email);
         String Email = UserEmail.getText().toString();
-        Password = (TextView) findViewById(R.id.Password);
-        String Pass = Password.getText().toString();
-        String UserString  = Email + "--"+Pass;
-        try {
-            File file = new File(this.getFilesDir(), "current.usr");
-            FileWriter writer = new FileWriter(file);
-            writer.append(UserString);
-            writer.flush();
-            writer.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        UserPassword = (TextView) findViewById(R.id.Password);
+        String TypedPassword = UserPassword.getText().toString();
 
+        if (!UserExists) {
+            Salt = BCrypt.gensalt(12);
+            String TypedHashedPassword = BCrypt.hashpw(UserPassword.getText().toString(), Salt);
+            String UserString = Email + "--" + TypedHashedPassword + "--" + Salt;
+            try {
+                File file = new File(this.getFilesDir(), UsrFilename);
+                FileWriter writer = new FileWriter(file);
+                writer.append(UserString);
+                writer.flush();
+                writer.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         // TODO implement login procedure
+        if(BCrypt.checkpw(TypedPassword,HashedPassword))
+        {
+            DBconnect db_users = new DBconnect();
+            db_users.insertUser(Email, HashedPassword, Salt,"null", AppConfig.TABLE_USERS);
 
-        DBconnect db_users = new DBconnect();
-        db_users.insertUser(Email, Pass, BCrypt.gensalt(12),"null", AppConfig.TABLE_USERS);
-
-        Intent intent = new Intent(this, Indicators.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, Indicators.class);
+            startActivity(intent);
+        }
 
     }
 }

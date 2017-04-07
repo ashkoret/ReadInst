@@ -40,12 +40,11 @@ public class DBconnect {
     public boolean insertUser(String UserEmail, String UserPassword, String UserSalt, String Dev,String Table)
     {
         boolean result = false;
-        String hashedPassword = BCrypt.hashpw(UserPassword,UserSalt);
         if (conn!=null) {
             try {
                 PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Password, Salt, Dev0) VALUES (?,?,?,?)");
                 st.setString(1, UserEmail);
-                st.setString(2, hashedPassword);
+                st.setString(2, UserPassword);
                 st.setString(3, UserSalt);
                 st.setString(4, Dev);
                 result = st.execute();
