@@ -40,16 +40,17 @@ public class DBconnect {
             Log.e(TAG, c.getMessage());
         }
     }
-    public boolean insertUser(String UserEmail, String UserPassword, String UserSalt, String Dev,String Table)
+    public boolean insertUser(String UserEmail, String UserPassword, String UserSalt, String Dev, String DevName, String Table)
     {
         boolean result = false;
         if (conn!=null) {
             try {
-                PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Password, Salt, Dev0) VALUES (?,?,?,?)");
+                PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Password, Salt, Dev0, DevName) VALUES (?,?,?,?,?)");
                 st.setString(1, UserEmail);
                 st.setString(2, UserPassword);
                 st.setString(3, UserSalt);
                 st.setString(4, Dev);
+                st.setString(5, DevName);
                 result = st.execute();
                 st.close();
             } catch (SQLException s) {
@@ -57,6 +58,25 @@ public class DBconnect {
             }
         }
         return result;
+    }
+
+    public String getUserSalt(String UserEmail, String Table)
+    {
+        String Salt = "";
+        if (conn!=null) {
+            try {
+                //TODO check this query
+                String query = "SELECT * FROM " + Table + " WHERE Email = '" + UserEmail + "'";
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                if (rs.next()) {
+                    Salt = rs.getString("Salt");
+                }
+            } catch (SQLException s) {
+                Log.e(TAG, s.getMessage());
+            }
+        }
+        return Salt;
     }
 
     public Boolean[] checkUser(String UserEmail, String UserPassword, String Table)
@@ -69,7 +89,7 @@ public class DBconnect {
             try
             {
                 //TODO check this query
-                String query = "SELECT * FROM " + Table + "WHERE Email = '"+ UserEmail +"')";
+                String query = "SELECT * FROM " + Table + " WHERE Email = '"+ UserEmail +"'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
                 if (rs.next()) {
@@ -98,7 +118,7 @@ public class DBconnect {
         if (conn!=null) {
             try
             {
-                String query = "SELECT * FROM " + Table + "WHERE Email = '" + UserEmail + "')";
+                String query = "SELECT * FROM " + Table + " WHERE Email = '" + UserEmail + "'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
                 if (rs.next())
@@ -120,7 +140,7 @@ public class DBconnect {
     public HashMap<String, String> getUser(String UserEmail, String Table)
     {
         HashMap<String, String> UserDevices = new HashMap<>();
-        String query = "SELECT * FROM " + Table + "WHERE Email = '"+ UserEmail +"')";
+        String query = "SELECT * FROM " + Table + " WHERE Email = '"+ UserEmail +"'";
             try
             {
                 Statement st = conn.createStatement();

@@ -88,7 +88,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String TypedPassword = UserPassword.getText().toString();
 
         if (!UserExists) {
-            Salt = BCrypt.gensalt(12);
+            // TODO check user in DB
+            // TODO if exists, get salt
+            // TODO if not - then put him in DB and this:
+            connectAndPull(Email, HashedPassword, AppConfig.TABLE_USERS);
             String TypedHashedPassword = BCrypt.hashpw(UserPassword.getText().toString(), Salt);
             String UserString = Email + "--" + TypedHashedPassword + "--" + Salt;
             try {
@@ -97,12 +100,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 writer.append(UserString);
                 writer.flush();
                 writer.close();
+                UserExists = true;
                 }
             catch (IOException e)
                 {
                   e.printStackTrace();
                 }
-            connectAndPull(Email, HashedPassword, Salt, AppConfig.TABLE_USERS);
+
             Intent intent = new Intent(this, Indicators.class);
             startActivity(intent);
         }
@@ -110,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else {
             if (BCrypt.checkpw(TypedPassword, HashedPassword)) {
 
-                connectAndPull(Email, HashedPassword, Salt, AppConfig.TABLE_USERS);
+                connectAndPull(Email, HashedPassword, AppConfig.TABLE_USERS);
                 Intent intent = new Intent(this, Indicators.class);
                 startActivity(intent);
             }
@@ -118,18 +122,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public List<String> connectAndPull(String Email, String HashedPassword, String Salt, String Table)
+    public List<String> connectAndPull(String Email, String Password, String Table)
     {
         List<String> AllDevs = Collections.emptyList();
         DBconnect db_users = new DBconnect();
-        Boolean[] UserExits = db_users.checkUser(Email, HashedPassword, Table);
+        Boolean[] UserExits = db_users.checkUser(Email, Password, Table);
         if (UserExits[1])
         {
-           AllDevs = db_users.readUser(Email, Table);
+            AllDevs = db_users.readUser(Email, Table);
+            Salt = db_users.getUserSalt(Email, Table);
         }
         else
         {
-            db_users.insertUser(Email,HashedPassword,Salt,"null",Table);
+            Salt = BCrypt.gensalt(12);
+            String TypedHashedPassword = BCrypt.hashpw(UserPassword.getText().toString(), Salt);
+            db_users.insertUser(Email,TypedHashedPassword, Salt,"null", "null", Table);
         }
         return AllDevs;
     }
