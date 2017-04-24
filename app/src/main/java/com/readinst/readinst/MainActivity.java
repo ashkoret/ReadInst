@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String HashedPassword = "";
     String TypedPassword = "";
     String Salt = "";
-    DBconnect db_users = new DBconnect();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +36,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-
-        //TODO Commented login functionality needs to be addressed properly
 
         LoginButton = (Button) findViewById(R.id.LoginButton);
         LoginButton.setOnClickListener(MainActivity.this);
@@ -61,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         UserEmail = (TextView) findViewById(R.id.Email);
                         UserEmail.setText(Email);
-
+                        DBconnect db_users = new DBconnect();
                         AppConfig.UserExists = db_users.checkUser(Email, HashedPassword, AppConfig.TABLE_USERS);
                         if (AppConfig.UserExists[0] & AppConfig.UserExists[1])
                         {
@@ -86,9 +83,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    // TODO
-    // TODO implement login procedure below properly
-    // TODO
 
     @Override
     public void onClick(View v) {
@@ -98,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TypedPassword = UserPassword.getText().toString();
 
         if (!AppConfig.UserExists[0]) {
-
+            DBconnect db_users = new DBconnect();
             Salt = db_users.getUserSalt(Email, AppConfig.TABLE_USERS);
             if (!Salt.equals("NULL"))
             {
@@ -130,6 +124,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 HashedPassword = BCrypt.hashpw(TypedPassword, Salt);
                 TypedPassword = "NULL";
                 db_users.insertUser(Email, HashedPassword, Salt, "NULL", "NULL", AppConfig.TABLE_USERS);
+                String UserString = Email + "--" + HashedPassword + "--" + Salt;
+                try {
+                    File file = new File(this.getFilesDir(), UsrFilename);
+                    FileWriter writer = new FileWriter(file);
+                    writer.append(UserString);
+                    writer.flush();
+                    writer.close();
+                    AppConfig.UserExists[0] = true;
+                    AppConfig.UserExists[1] = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Intent intent = new Intent(this, Indicators.class);
                 startActivity(intent);
             }
@@ -147,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 // TODO Move PullDeviceList
     public List<String> PulldeviceList(String Email, String Table)
     {
+        DBconnect db_users = new DBconnect();
         List<String> AllDevs = Collections.emptyList();
 
         if (AppConfig.UserExists[1])

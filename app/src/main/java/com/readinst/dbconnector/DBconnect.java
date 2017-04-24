@@ -65,7 +65,6 @@ public class DBconnect {
         String Salt = "NULL";
         if (conn!=null) {
             try {
-                //TODO check this query
                 String query = "SELECT * FROM " + Table + " WHERE Email = '" + UserEmail + "'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
@@ -90,17 +89,16 @@ public class DBconnect {
         {
             try
             {
-                //TODO check this query
                 String query = "SELECT * FROM " + Table + " WHERE Email = '"+ UserEmail +"'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
                 if (rs.next()) {
                     StoredUserEmail = rs.getString("Email");
                     StoredPassword = rs.getString("Password");
-                    if (StoredPassword == UserPassword) {
+                    if (StoredPassword.equals(UserPassword)) {
                         UserExists[1] = true;
                     }
-                    if (StoredUserEmail == UserEmail) {
+                    if (StoredUserEmail.equals(UserEmail)) {
                         UserExists[0] = true;
                     }
                 }
