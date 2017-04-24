@@ -62,7 +62,7 @@ public class DBconnect {
 
     public String getUserSalt(String UserEmail, String Table)
     {
-        String Salt = "";
+        String Salt = "NULL";
         if (conn!=null) {
             try {
                 //TODO check this query
@@ -78,6 +78,8 @@ public class DBconnect {
         }
         return Salt;
     }
+
+
 
     public Boolean[] checkUser(String UserEmail, String UserPassword, String Table)
     {

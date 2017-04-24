@@ -13,4 +13,6 @@ public class AppConfig {
     public static final String TABLE_DEVICES = "ReadInstruments";
     public static final String TABLE_USERS = "ReadInstUsers";
     public static final String USR_FILE = "current.usr";
+    public static String Android_DEVICE_ID = "NULL";
+    public static Boolean UserExists[] = {false, false};
 }
