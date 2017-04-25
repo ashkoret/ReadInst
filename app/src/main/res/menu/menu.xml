@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    >
+
+    <item android:id="@+id/AddPC"
+        android:title="Add PC with QR-code" />
+
+    <item android:id="@+id/AddPCman"
+        android:title="Add PC manually"/>
+
+    <item android:id="@+id/Exit"
+        android:title="Exit App"/>
+
+
+</menu>
