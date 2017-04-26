@@ -11,8 +11,6 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import android.content.Intent;
-import java.util.Collections;
-import java.util.List;
 
 import com.readinst.dbconnector.DBconnect;
 import org.springframework.security.crypto.bcrypt.BCrypt;

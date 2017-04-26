@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import android.util.Log;
+
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Collections;
 
@@ -111,23 +113,23 @@ public class DBconnect {
 
     public List<String> readUser(String UserEmail, String Table)
     {
-       List<String> Devs = Collections.emptyList();
+       List<String> Devs = new LinkedList<>();
         String Dev0;
         if (conn!=null) {
-            try
-            {
+            try {
                 String query = "SELECT * FROM " + Table + " WHERE Email = '" + UserEmail + "'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
-                if (rs.next())
-                {
+                while (rs.next()) {
                     Dev0 = rs.getString("Dev0");
                     Devs.add(Dev0);
                 }
+                rs.close();
             } catch (SQLException s) {
                 Log.e(TAG, s.getMessage());
             }
         }
+
        return Devs;
     }
 

@@ -17,7 +17,7 @@ public class Indicators extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicators);
         DBconnect db_users = new DBconnect();
-     //   db_users.readUser(AppConfig.UserEmail, AppConfig.TABLE_USER_DEVS);
+        db_users.readUser(AppConfig.UserEmail, AppConfig.TABLE_USER_DEVS);
         // TODO Code the PC list retrieval here
     }
 
