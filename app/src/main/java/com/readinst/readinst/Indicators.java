@@ -7,14 +7,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.readinst.dbconnector.DBconnect;
+
 public class Indicators extends AppCompatActivity {
 
-    //TODO Add menu
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicators);
+        DBconnect db_users = new DBconnect();
+     //   db_users.readUser(AppConfig.UserEmail, AppConfig.TABLE_USER_DEVS);
+        // TODO Code the PC list retrieval here
     }
 
     @Override

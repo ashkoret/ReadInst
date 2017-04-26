@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if ((Credentials[0]!= null) && (Credentials.length == 3))
                     {
                         Email = Credentials[0];
+                        AppConfig.UserEmail = Email;
                         HashedPassword = Credentials[1];
                         Salt =  Credentials[2];
-
                         UserEmail = (TextView) findViewById(R.id.Email);
                         UserEmail.setText(Email);
                         DBconnect db_users = new DBconnect();
@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         UserEmail = (TextView) findViewById(R.id.Email);
         Email = UserEmail.getText().toString();
+        AppConfig.UserEmail = Email;
         UserPassword = (TextView) findViewById(R.id.Password);
         TypedPassword = UserPassword.getText().toString();
 
@@ -102,17 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (AppConfig.UserExists[1]) {
                     String UserString = Email + "--" + HashedPassword + "--" + Salt;
-                    try {
-                        File file = new File(this.getFilesDir(), UsrFilename);
-                        FileWriter writer = new FileWriter(file);
-                        writer.append(UserString);
-                        writer.flush();
-                        writer.close();
-                        AppConfig.UserExists[0] = true;
-                        AppConfig.UserExists[1] = true;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    WriteUserToFile(UserString);
                     Intent intent = new Intent(this, Indicators.class);
                     startActivity(intent);
                 }
@@ -123,19 +114,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Salt = BCrypt.gensalt(12);
                 HashedPassword = BCrypt.hashpw(TypedPassword, Salt);
                 TypedPassword = "NULL";
-                db_users.insertUser(Email, HashedPassword, Salt, "NULL", "NULL", AppConfig.TABLE_USERS);
+                db_users.insertUser(Email, HashedPassword, Salt, AppConfig.TABLE_USERS);
                 String UserString = Email + "--" + HashedPassword + "--" + Salt;
-                try {
-                    File file = new File(this.getFilesDir(), UsrFilename);
-                    FileWriter writer = new FileWriter(file);
-                    writer.append(UserString);
-                    writer.flush();
-                    writer.close();
-                    AppConfig.UserExists[0] = true;
-                    AppConfig.UserExists[1] = true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                WriteUserToFile(UserString);
                 Intent intent = new Intent(this, Indicators.class);
                 startActivity(intent);
             }
@@ -150,17 +131,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-// TODO Move PullDeviceList
-    public List<String> PulldeviceList(String Email, String Table)
+    public void WriteUserToFile(String UserString)
     {
-        DBconnect db_users = new DBconnect();
-        List<String> AllDevs = Collections.emptyList();
-
-        if (AppConfig.UserExists[1])
-        {
-            AllDevs = db_users.readUser(Email, Table);
+        try {
+            File file = new File(this.getFilesDir(), UsrFilename);
+            FileWriter writer = new FileWriter(file);
+            writer.append(UserString);
+            writer.flush();
+            writer.close();
+            AppConfig.UserExists[0] = true;
+            AppConfig.UserExists[1] = true;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        return AllDevs;
+        Intent intent = new Intent(this, Indicators.class);
+        startActivity(intent);
     }
 }

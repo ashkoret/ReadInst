@@ -12,7 +12,8 @@ public class AppConfig {
     public static final String DRIVER = "com.mysql.jdbc.Driver";
     public static final String TABLE_DEVICES = "ReadInstruments";
     public static final String TABLE_USERS = "ReadInstUsers";
+    public static final String TABLE_USER_DEVS = "ReadInstUserDevs";
     public static final String USR_FILE = "current.usr";
-    public static String Android_DEVICE_ID = "NULL";
+    public static String UserEmail = "";
     public static Boolean UserExists[] = {false, false};
 }

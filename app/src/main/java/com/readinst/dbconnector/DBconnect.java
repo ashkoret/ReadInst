@@ -40,17 +40,15 @@ public class DBconnect {
             Log.e(TAG, c.getMessage());
         }
     }
-    public boolean insertUser(String UserEmail, String UserPassword, String UserSalt, String Dev, String DevName, String Table)
+    public boolean insertUser(String UserEmail, String UserPassword, String UserSalt, String Table)
     {
         boolean result = false;
         if (conn!=null) {
             try {
-                PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Password, Salt, Dev0, DevName) VALUES (?,?,?,?,?)");
+                PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Password, Salt) VALUES (?,?,?)");
                 st.setString(1, UserEmail);
                 st.setString(2, UserPassword);
                 st.setString(3, UserSalt);
-                st.setString(4, Dev);
-                st.setString(5, DevName);
                 result = st.execute();
                 st.close();
             } catch (SQLException s) {
@@ -126,14 +124,11 @@ public class DBconnect {
                     Dev0 = rs.getString("Dev0");
                     Devs.add(Dev0);
                 }
-
-                // TODO Read the table and get Dev0
             } catch (SQLException s) {
                 Log.e(TAG, s.getMessage());
             }
         }
        return Devs;
-
     }
 
 
