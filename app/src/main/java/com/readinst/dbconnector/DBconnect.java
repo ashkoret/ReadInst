@@ -111,18 +111,20 @@ public class DBconnect {
         return UserExists;
     }
 
-    public List<String> readUser(String UserEmail, String Table)
+    public HashMap<String, String> readUser(String UserEmail, String Table)
     {
-       List<String> Devs = new LinkedList<>();
-        String Dev0;
+        HashMap<String, String> UserDevices = new HashMap<>();
+
         if (conn!=null) {
             try {
                 String query = "SELECT * FROM " + Table + " WHERE Email = '" + UserEmail + "'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
+                int i=0;
                 while (rs.next()) {
-                    Dev0 = rs.getString("Dev0");
-                    Devs.add(Dev0);
+                    UserDevices.put("Dev"+Integer.toString(i), rs.getString("Dev0"));
+                    UserDevices.put("Dev"+Integer.toString(i)+"Name", rs.getString("DevName"));
+                    i++;
                 }
                 rs.close();
             } catch (SQLException s) {
@@ -130,28 +132,7 @@ public class DBconnect {
             }
         }
 
-       return Devs;
-    }
-
-
-    public HashMap<String, String> getUser(String UserEmail, String Table)
-    {
-        HashMap<String, String> UserDevices = new HashMap<>();
-        String query = "SELECT * FROM " + Table + " WHERE Email = '"+ UserEmail +"'";
-            try
-            {
-                Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(query);
-                if (rs.next())
-                {
-                    UserDevices.put("Dev0", rs.getString("Dev0"));
-                }
-            }
-            catch(SQLException s)
-            {
-                Log.e(TAG, s.getMessage());
-            }
-            return UserDevices;
+       return UserDevices;
     }
 
 }
