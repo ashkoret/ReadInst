@@ -131,8 +131,34 @@ public class DBconnect {
                 Log.e(TAG, s.getMessage());
             }
         }
-
        return UserDevices;
     }
 
+    public HashMap<String, String> readUserInst(String PCID, String Table)
+    {
+        HashMap<String, String> DevIndicators = new HashMap<>();
+
+        if (conn!=null) {
+            try {
+                String query = "SELECT * FROM " + Table + " WHERE DeviceID = '" + PCID + "'";
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                int i=0;
+                while (rs.next()) {
+                    DevIndicators.put("Instrument"+Integer.toString(i), rs.getString("Instrument"));
+                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value0", rs.getString("Value0"));
+                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value1", rs.getString("Value1"));
+                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value2", rs.getString("Value2"));
+                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value3", rs.getString("Value3"));
+                    DevIndicators.put("Time"+Integer.toString(i), rs.getString("Time"));
+                    i++;
+                }
+                rs.close();
+            } catch (SQLException s) {
+                Log.e(TAG, s.getMessage());
+            }
+        }
+
+        return DevIndicators;
+    }
 }
