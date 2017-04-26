@@ -37,7 +37,11 @@ public class Indicators extends AppCompatActivity {
             case R.id.AddPCman:
                 Toast.makeText(Indicators.this, "Add PC manually", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.Logout:
+                Toast.makeText(Indicators.this, "Log out", Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.Exit:
+                Toast.makeText(Indicators.this, "Exit", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
