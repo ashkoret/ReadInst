@@ -122,8 +122,7 @@ public class DBconnect {
                 ResultSet rs = st.executeQuery(query);
                 int i=0;
                 while (rs.next()) {
-                    UserDevices.put("Dev"+Integer.toString(i), rs.getString("Dev0"));
-                    UserDevices.put("Dev"+Integer.toString(i)+"Name", rs.getString("DevName"));
+                    UserDevices.put(rs.getString("DevName"), rs.getString("Dev0"));
                     i++;
                 }
                 rs.close();
@@ -134,7 +133,7 @@ public class DBconnect {
        return UserDevices;
     }
 
-    public HashMap<String, String> readUserInst(String PCID, String Table)
+    public HashMap<String, String> readDeviceIndicators(String PCID, String Table)
     {
         HashMap<String, String> DevIndicators = new HashMap<>();
 

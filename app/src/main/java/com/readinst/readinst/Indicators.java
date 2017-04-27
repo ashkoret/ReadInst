@@ -9,8 +9,9 @@ import android.widget.Toast;
 
 import com.readinst.dbconnector.DBconnect;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 public class Indicators extends AppCompatActivity {
 
 
@@ -19,11 +20,18 @@ public class Indicators extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicators);
         HashMap<String, String> UserDevs;
+        HashMap<String, String> DevIndicators;
         DBconnect db_users = new DBconnect();
         UserDevs = db_users.readUser(AppConfig.UserEmail, AppConfig.TABLE_USER_DEVS);
-        int DevNums = UserDevs.size()/2;
-        for (int i = 0; i<DevNums; i++)
+        ArrayList<String> DevNameList = new ArrayList<>(UserDevs.keySet());
+        ArrayList<String> DevList = new ArrayList<>(UserDevs.values());
+        ArrayList<ArrayList<String>> Indicators = new ArrayList<>();
+
+        for (int i = 0; i<DevList.size(); i++)
         {
+            String DeviceID = DevList.get(i);
+            DevIndicators = db_users.readDeviceIndicators(DeviceID, AppConfig.TABLE_DEVICES);
+
             // TODO split the UserDevs in two lists of Devs and DevNames
             // TODO get all the Instruments from all the DEVs one by one Dev from the UserDevs
         }
