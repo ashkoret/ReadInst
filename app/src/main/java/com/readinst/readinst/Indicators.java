@@ -50,12 +50,20 @@ public class Indicators extends AppCompatActivity {
         for (int i = 0; i<DevList.size(); i++) {
             for (int j = 0; j < 5; j++)
             {
-                String DevName = Indicators.get(i).get(j);
+                String DevName = Indicators.get(i).get(j).replace("\r\n","").replace("\r","").replace("\n","");
+
                 if (!DevName.equals(new String("0")))
                 {
                     EditText editText = new EditText(getBaseContext());
                     editText.setTag("Indicator" + totalEditTexts);
-                    editText.setTextColor(Color.BLACK);
+                    if (j == 0)
+                    {
+                        editText.setTextColor(Color.RED);
+                    }
+                    else
+                    {
+                        editText.setTextColor(Color.BLACK);
+                    }
                     editText.setId(i * 5 + j);
                     editText.setText(DevName);
                     IndicatorLayout.addView(editText);

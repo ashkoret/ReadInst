@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import android.util.Log;
@@ -140,17 +141,17 @@ public class DBconnect {
 
         if (conn!=null) {
             try {
-                String query = "SELECT * FROM " + Table + " WHERE DeviceID = '" + PCID + "'";
+                String query = "SELECT * FROM `" + Table + "` WHERE `DeviceID` = '" + PCID + "'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
                 int i=0;
                 while (rs.next()) {
-                    DevIndicators.put("Instrument", rs.getString("Instrument"));
-                    DevIndicators.put("Value0", rs.getString("Value0"));
-                    DevIndicators.put("Value1", rs.getString("Value1"));
-                    DevIndicators.put("Value2", rs.getString("Value2"));
-                    DevIndicators.put("Value3", rs.getString("Value3"));
-                    DevIndicators.put("Time", rs.getString("Time"));
+                    DevIndicators.put("Instrument"+Integer.toString(i), rs.getString("Instrument"));
+                    DevIndicators.put("Value0"+Integer.toString(i), rs.getString("Value0"));
+                    DevIndicators.put("Value1"+Integer.toString(i), rs.getString("Value1"));
+                    DevIndicators.put("Value2"+Integer.toString(i), rs.getString("Value2"));
+                    DevIndicators.put("Value3"+Integer.toString(i), rs.getString("Value3"));
+                    DevIndicators.put("Time"+Integer.toString(i), rs.getString("Time"));
                     i++;
                 }
                 rs.close();
