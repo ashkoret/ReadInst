@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import android.util.Log;
 
@@ -133,9 +134,9 @@ public class DBconnect {
        return UserDevices;
     }
 
-    public HashMap<String, String> readDeviceIndicators(String PCID, String Table)
+    public LinkedHashMap<String, String> readDeviceIndicators(String PCID, String Table)
     {
-        HashMap<String, String> DevIndicators = new HashMap<>();
+        LinkedHashMap<String, String> DevIndicators = new LinkedHashMap<>();
 
         if (conn!=null) {
             try {
@@ -144,12 +145,12 @@ public class DBconnect {
                 ResultSet rs = st.executeQuery(query);
                 int i=0;
                 while (rs.next()) {
-                    DevIndicators.put("Instrument"+Integer.toString(i), rs.getString("Instrument"));
-                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value0", rs.getString("Value0"));
-                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value1", rs.getString("Value1"));
-                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value2", rs.getString("Value2"));
-                    DevIndicators.put("Instrument"+Integer.toString(i)+"Value3", rs.getString("Value3"));
-                    DevIndicators.put("Time"+Integer.toString(i), rs.getString("Time"));
+                    DevIndicators.put("Instrument", rs.getString("Instrument"));
+                    DevIndicators.put("Value0", rs.getString("Value0"));
+                    DevIndicators.put("Value1", rs.getString("Value1"));
+                    DevIndicators.put("Value2", rs.getString("Value2"));
+                    DevIndicators.put("Value3", rs.getString("Value3"));
+                    DevIndicators.put("Time", rs.getString("Time"));
                     i++;
                 }
                 rs.close();

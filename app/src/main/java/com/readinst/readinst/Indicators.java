@@ -11,6 +11,7 @@ import com.readinst.dbconnector.DBconnect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 public class Indicators extends AppCompatActivity {
 
@@ -20,7 +21,7 @@ public class Indicators extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicators);
         HashMap<String, String> UserDevs;
-        HashMap<String, String> DevIndicators;
+        LinkedHashMap<String, String> DevIndicators;
         DBconnect db_users = new DBconnect();
         UserDevs = db_users.readUser(AppConfig.UserEmail, AppConfig.TABLE_USER_DEVS);
         ArrayList<String> DevNameList = new ArrayList<>(UserDevs.keySet());
@@ -31,7 +32,12 @@ public class Indicators extends AppCompatActivity {
         {
             String DeviceID = DevList.get(i);
             DevIndicators = db_users.readDeviceIndicators(DeviceID, AppConfig.TABLE_DEVICES);
-
+            /*if (i==0)
+            {
+            Indicators.add(new ArrayList<>(DevIndicators.keySet()));
+            }*/
+            Indicators.add(new ArrayList<>(DevIndicators.values()));
+            boolean foo = true;
             // TODO split the UserDevs in two lists of Devs and DevNames
             // TODO get all the Instruments from all the DEVs one by one Dev from the UserDevs
         }
