@@ -1,6 +1,7 @@
 package com.readinst.readinst;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.view.View;
@@ -46,19 +47,21 @@ public class Indicators extends AppCompatActivity {
 
         ConstraintSet set = new ConstraintSet();
 
-        for (int i = 0; i<DevList.size(); i++)
-        {
-        EditText editText = new EditText(getBaseContext());
-            editText.setTag("Indicator" + totalEditTexts);
-            editText.setId(i*5);
-
-
-        String DevName = Indicators.get(i).get(0);
-        editText.setText(DevName);
-
-
-        IndicatorLayout.addView(editText);
-            totalEditTexts++;
+        for (int i = 0; i<DevList.size(); i++) {
+            for (int j = 0; j < 5; j++)
+            {
+                String DevName = Indicators.get(i).get(j);
+                if (!DevName.equals(new String("0")))
+                {
+                    EditText editText = new EditText(getBaseContext());
+                    editText.setTag("Indicator" + totalEditTexts);
+                    editText.setTextColor(Color.BLACK);
+                    editText.setId(i * 5 + j);
+                    editText.setText(DevName);
+                    IndicatorLayout.addView(editText);
+                    totalEditTexts++;
+                }
+            }
         }
 
     }
