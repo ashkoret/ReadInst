@@ -47,8 +47,11 @@ public class Indicators extends AppCompatActivity {
 
         ConstraintSet set = new ConstraintSet();
 
+        ArrayList<EditText> TextViews = new ArrayList<>();
+
         for (int i = 0; i<DevList.size(); i++) {
-            for (int j = 0; j < 5; j++)
+            //TODO Print PC name
+            for (int j = 0; j < Indicators.get(i).size(); j++)
             {
                 String DevName = Indicators.get(i).get(j).replace("\r\n","").replace("\r","").replace("\n","");
 
@@ -56,7 +59,7 @@ public class Indicators extends AppCompatActivity {
                 {
                     EditText editText = new EditText(getBaseContext());
                     editText.setTag("Indicator" + totalEditTexts);
-                    if (j == 0)
+                    if (j == Math.ceil(j/5)*5)
                     {
                         editText.setTextColor(Color.RED);
                     }
@@ -66,6 +69,7 @@ public class Indicators extends AppCompatActivity {
                     }
                     editText.setId(i * 5 + j);
                     editText.setText(DevName);
+                    TextViews.add(editText);
                     IndicatorLayout.addView(editText);
                     totalEditTexts++;
                 }
