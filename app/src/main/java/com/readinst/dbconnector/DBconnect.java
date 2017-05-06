@@ -9,14 +9,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import android.util.Log;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Collections;
 
 /**
  * Created by dan on 02-04-17.
@@ -143,13 +139,13 @@ public class DBconnect {
                 String query = "SELECT * FROM `" + Table + "` WHERE `DeviceID` = '" + PCID + "'";
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(query);
-                ResultSetMetaData metadata = rs.getMetaData();
                 rs.last();
                 int rows = rs.getRow();
                 rs.beforeFirst();
                 for (int i = 0; i<rows; i++) {
                     rs.next();
                     DevIndicators.put("Instrument"+Integer.toString(i), rs.getString("Instrument"));
+                    DevIndicators.put("Time"+Integer.toString(i), rs.getTimestamp("Time").toString());
                     DevIndicators.put("Value0"+Integer.toString(i), rs.getString("Value0"));
                     DevIndicators.put("Value1"+Integer.toString(i), rs.getString("Value1"));
                     DevIndicators.put("Value2"+Integer.toString(i), rs.getString("Value2"));

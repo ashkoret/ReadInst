@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.view.Gravity;
 import android.view.View;
 
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ public class Indicators extends AppCompatActivity {
         DBconnect db_users = new DBconnect();
         UserDevs = db_users.readUser(AppConfig.UserEmail, AppConfig.TABLE_USER_DEVS);
         ArrayList<String> DevList = new ArrayList<>(UserDevs.values());
+        ArrayList<String> DevListNames = new ArrayList<>(UserDevs.keySet());
         ArrayList<ArrayList<String>> Indicators = new ArrayList<>();
         IndicatorLayout = (LinearLayout) findViewById(R.id.indicators);
         for (int i = 0; i<DevList.size(); i++)
@@ -50,7 +52,12 @@ public class Indicators extends AppCompatActivity {
         ArrayList<EditText> TextViews = new ArrayList<>();
 
         for (int i = 0; i<DevList.size(); i++) {
-            //TODO Print PC name
+            EditText editTextPC = new EditText(getBaseContext());
+            editTextPC.setText(DevListNames.get(i));
+            editTextPC.setTextColor(Color.rgb(0,0,152));
+            editTextPC.setGravity(Gravity.CENTER);
+            TextViews.add(editTextPC);
+            IndicatorLayout.addView(editTextPC);
             for (int j = 0; j < Indicators.get(i).size(); j++)
             {
                 String DevName = Indicators.get(i).get(j).replace("\r\n","").replace("\r","").replace("\n","");
@@ -59,15 +66,19 @@ public class Indicators extends AppCompatActivity {
                 {
                     EditText editText = new EditText(getBaseContext());
                     editText.setTag("Indicator" + totalEditTexts);
-                    if (j == Math.ceil(j/5)*5)
+                    if (j == Math.ceil(j/6)*6)
                     {
-                        editText.setTextColor(Color.RED);
+                        editText.setTextColor(Color.rgb(152,0,0));
+                    }
+                    else if ((j-1) == Math.ceil((j-1)/6)*6)
+                    {
+                        editText.setTextColor(Color.rgb(0,102,0));
                     }
                     else
                     {
-                        editText.setTextColor(Color.BLACK);
+                        editText.setTextColor(Color.rgb(64,64,64));
                     }
-                    editText.setId(i * 5 + j);
+                    editText.setId(i * 6 + j);
                     editText.setText(DevName);
                     TextViews.add(editText);
                     IndicatorLayout.addView(editText);
@@ -84,6 +95,8 @@ public class Indicators extends AppCompatActivity {
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    //TODO code the buttons, add device first
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
