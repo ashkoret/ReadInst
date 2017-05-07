@@ -1,18 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "com.readinst.readinst"
-        minSdkVersion 16
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 24
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        jackOptions {
-            enabled true
-        }
+        //jackOptions {
+        //    enabled true
+        //}
     }
     buildTypes {
         release {
@@ -20,10 +21,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+   // compileOptions {
+   //     sourceCompatibility JavaVersion.VERSION_1_8
+   //     targetCompatibility JavaVersion.VERSION_1_8
+    //}
 }
 
 dependencies {
@@ -33,7 +34,8 @@ dependencies {
     })
     compile project(':mysql-connector-java-5.1.41-bin')
     compile project(':spring-security-crypto-4.2.2.RELEASE')
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.android.gms:play-services:10.2.4'
     testCompile 'junit:junit:4.12'
 }
