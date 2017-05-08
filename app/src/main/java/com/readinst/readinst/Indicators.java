@@ -1,6 +1,7 @@
 package com.readinst.readinst;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -12,26 +13,36 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.readinst.barcode.BarcodeCaptureActivity;
 import com.readinst.dbconnector.DBconnect;
+import com.readinst.readinst.AppConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-public class Indicators extends AppCompatActivity {
+
+import static com.readinst.readinst.AppConfig.BARCODE_READER_REQUEST_CODE;
+
+public class Indicators extends AppCompatActivity
+{
 
     static int totalEditTexts = 0;
     LinearLayout IndicatorLayout;
     Context context = this;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicators);
+
+
         HashMap<String, String> UserDevs;
         LinkedHashMap<String, String> DevIndicators;
         DBconnect db_users = new DBconnect();
@@ -93,16 +104,30 @@ public class Indicators extends AppCompatActivity {
     public boolean onCreateOptionsMenu (Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+
+        /*Button scanBarcodeButton = (Button) findViewById(R.id.AddPC);
+        scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
+                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+            }
+        });*/
+
         return super.onCreateOptionsMenu(menu);
     }
 
     //TODO code the buttons, add device first
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.AddPC:
                 Toast.makeText(Indicators.this, "Add PC using QR", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
+                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
                 return true;
             case R.id.AddPCman:
                 Toast.makeText(Indicators.this, "Add PC manually", Toast.LENGTH_SHORT).show();
@@ -116,6 +141,5 @@ public class Indicators extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 }

@@ -16,4 +16,5 @@ public class AppConfig {
     public static final String USR_FILE = "current.usr";
     public static String UserEmail = "";
     public static Boolean UserExists[] = {false, false};
+    public static final int BARCODE_READER_REQUEST_CODE = 1;
 }
