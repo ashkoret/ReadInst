@@ -3,8 +3,10 @@ package com.readinst.readinst;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
@@ -18,6 +20,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.readinst.barcode.BarcodeCaptureActivity;
 import com.readinst.dbconnector.DBconnect;
 import com.readinst.readinst.AppConfig;
@@ -27,15 +31,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.readinst.readinst.AppConfig.BARCODE_READER_REQUEST_CODE;
+//import static com.readinst.readinst.AppConfig.BARCODE_READER_REQUEST_CODE;
 
 public class Indicators extends AppCompatActivity
 {
-
+    private static final String LOG_TAG = Indicators.class.getSimpleName();
+    private static final int BARCODE_READER_REQUEST_CODE = 1;
     static int totalEditTexts = 0;
     LinearLayout IndicatorLayout;
     Context context = this;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,6 @@ public class Indicators extends AppCompatActivity
         }
 
         ConstraintSet set = new ConstraintSet();
-
         ArrayList<EditText> TextViews = new ArrayList<>();
 
         for (int i = 0; i<DevList.size(); i++) {
@@ -73,7 +76,7 @@ public class Indicators extends AppCompatActivity
             {
                 String DevName = Indicators.get(i).get(j).replace("\r\n","").replace("\r","").replace("\n","");
 
-                if (!DevName.equals(new String("0")))
+                if (!DevName.equals("0"))
                 {
                     EditText editText = new EditText(getBaseContext());
                     editText.setTag("Indicator" + totalEditTexts);
@@ -104,22 +107,8 @@ public class Indicators extends AppCompatActivity
     public boolean onCreateOptionsMenu (Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
-
-        /*Button scanBarcodeButton = (Button) findViewById(R.id.AddPC);
-        scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
-                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
-            }
-        });*/
-
         return super.onCreateOptionsMenu(menu);
     }
-
-    //TODO code the buttons, add device first
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -142,4 +131,21 @@ public class Indicators extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BARCODE_READER_REQUEST_CODE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    Point[] p = barcode.cornerPoints;
+                    Toast.makeText(Indicators.this, barcode.displayValue, Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(Indicators.this, R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
+            } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
+                    CommonStatusCodes.getStatusCodeString(resultCode)));
+        } else super.onActivityResult(requestCode, resultCode, data);
+    }
+// TODO add floating menu with EditText device name, return PC-ID to the menu and to the list of the devices.
+// TODO Describe Log-off, Exit, Remove Manual add PC
+
 }

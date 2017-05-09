@@ -150,7 +150,6 @@ public class DBconnect {
                     DevIndicators.put("Value1"+Integer.toString(i), rs.getString("Value1"));
                     DevIndicators.put("Value2"+Integer.toString(i), rs.getString("Value2"));
                     DevIndicators.put("Value3"+Integer.toString(i), rs.getString("Value3"));
-                 // TODO get timestamp
                 }
                 rs.close();
             } catch (SQLException s) {
