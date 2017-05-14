@@ -6,9 +6,6 @@
     <item android:id="@+id/AddPC"
         android:title="Add PC with QR-code" />
 
-    <item android:id="@+id/AddPCman"
-        android:title="Add PC manually"/>
-
     <item android:id="@+id/Logout"
         android:title="Log out"/>
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.constraint.ConstraintSet;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.support.v7.app.AppCompatActivity;
@@ -21,13 +22,16 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.readinst.barcode.BarcodeCaptureActivity;
 import com.readinst.dbconnector.DBconnect;
+import com.readinst.readinst.AddDevDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 
-public class Indicators extends AppCompatActivity
+
+
+public class Indicators extends AppCompatActivity implements AddDevDialog.AddDevDialogListener
 {
     private static final String LOG_TAG = Indicators.class.getSimpleName();
     private static final int BARCODE_READER_REQUEST_CODE = 1;
@@ -36,9 +40,9 @@ public class Indicators extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicators);
-
 
         HashMap<String, String> UserDevs;
         LinkedHashMap<String, String> DevIndicators;
@@ -115,9 +119,6 @@ public class Indicators extends AppCompatActivity
                 Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
                 return true;
-            case R.id.AddPCman:
-                Toast.makeText(Indicators.this, "Add PC manually", Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.Logout:
                 Toast.makeText(Indicators.this, "Log out", Toast.LENGTH_SHORT).show();
                 return true;
@@ -144,7 +145,19 @@ public class Indicators extends AppCompatActivity
                     CommonStatusCodes.getStatusCodeString(resultCode)));
         } else super.onActivityResult(requestCode, resultCode, data);
     }
-// TODO add floating menu with EditText device name, return PC-ID to the menu and to the list of the devices.
+
+    @Override
+    public void onDialogPositiveClick(String DevID , String simpleID) {
+        String sDevId = simpleID;
+        String devId = DevID;
+    }
+
+    /*@Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+
+    }*/
+// TODO return PC-ID and simple name to the list of the devices.
 // TODO Describe Log-off, Exit, Remove Manual add PC
 
 }
