@@ -1,39 +1,31 @@
 package com.readinst.readinst;
 
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
-
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.readinst.barcode.BarcodeCaptureActivity;
 import com.readinst.dbconnector.DBconnect;
-import com.readinst.readinst.AddDevDialog;
-import com.readinst.readinst.AppConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
+
 
 public class Indicators extends AppCompatActivity
 {
@@ -41,7 +33,6 @@ public class Indicators extends AppCompatActivity
     private static final int BARCODE_READER_REQUEST_CODE = 1;
     static int totalEditTexts = 0;
     LinearLayout IndicatorLayout;
-    Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,11 +137,8 @@ public class Indicators extends AppCompatActivity
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
                     Point[] p = barcode.cornerPoints;
                     Toast.makeText(Indicators.this, barcode.displayValue, Toast.LENGTH_SHORT).show();
-                    TextView devID = (TextView) findViewById(R.id.devname);
-                    devID.setText(barcode.displayValue);
-                    DialogFragment addDevDialog = new AddDevDialog();
+                    DialogFragment addDevDialog = AddDevDialog.newInstance(barcode.displayValue);
                     addDevDialog.show(getFragmentManager(), "addDevDialog");
-
                 } else Toast.makeText(Indicators.this, R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));
