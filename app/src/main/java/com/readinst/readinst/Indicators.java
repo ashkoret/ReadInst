@@ -1,5 +1,6 @@
 package com.readinst.readinst;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,23 +16,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.readinst.barcode.BarcodeCaptureActivity;
 import com.readinst.dbconnector.DBconnect;
+import com.readinst.readinst.AddDevDialog;
 import com.readinst.readinst.AppConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-//import static com.readinst.readinst.AppConfig.BARCODE_READER_REQUEST_CODE;
 
 public class Indicators extends AppCompatActivity
 {
@@ -70,6 +72,7 @@ public class Indicators extends AppCompatActivity
             editTextPC.setText(DevListNames.get(i));
             editTextPC.setTextColor(Color.rgb(0,0,152));
             editTextPC.setGravity(Gravity.CENTER);
+            editTextPC.setEnabled(false);
             TextViews.add(editTextPC);
             IndicatorLayout.addView(editTextPC);
             for (int j = 0; j < Indicators.get(i).size(); j++)
@@ -79,6 +82,7 @@ public class Indicators extends AppCompatActivity
                 if (!DevName.equals("0"))
                 {
                     EditText editText = new EditText(getBaseContext());
+                    editText.setEnabled(false);
                     editText.setTag("Indicator" + totalEditTexts);
                     if (j == Math.ceil(j/6)*6)
                     {
@@ -100,6 +104,8 @@ public class Indicators extends AppCompatActivity
                 }
             }
         }
+
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
     }
 
@@ -140,6 +146,11 @@ public class Indicators extends AppCompatActivity
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
                     Point[] p = barcode.cornerPoints;
                     Toast.makeText(Indicators.this, barcode.displayValue, Toast.LENGTH_SHORT).show();
+                    TextView devID = (TextView) findViewById(R.id.devname);
+                    devID.setText(barcode.displayValue);
+                    DialogFragment addDevDialog = new AddDevDialog();
+                    addDevDialog.show(getFragmentManager(), "addDevDialog");
+
                 } else Toast.makeText(Indicators.this, R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));

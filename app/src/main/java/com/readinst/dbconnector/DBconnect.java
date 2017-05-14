@@ -75,6 +75,23 @@ public class DBconnect {
         return Salt;
     }
 
+    public String getUserPassword(String UserEmail, String Table)
+    {
+        String Password = "NULL";
+        if (conn!=null) {
+            try {
+                String query = "SELECT * FROM " + Table + " WHERE Email = '" + UserEmail + "'";
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                if (rs.next()) {
+                    Password = rs.getString("Password");
+                }
+            } catch (SQLException s) {
+                Log.e(TAG, s.getMessage());
+            }
+        }
+        return Password;
+    }
 
 
     public Boolean[] checkUser(String UserEmail, String UserPassword, String Table)

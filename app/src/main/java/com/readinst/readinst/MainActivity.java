@@ -32,16 +32,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // This allows internet use on MainActivity
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         LoginButton = (Button) findViewById(R.id.LoginButton);
         LoginButton.setOnClickListener(MainActivity.this);
 
-
+        // User login/password
         try {
             File file = new File(this.getFilesDir(), UsrFilename);
-            // Check file exists and read the stuff from file
+            // Check file exists and read login/password from file
             if (file.exists()) {
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 String ReadString;
@@ -62,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         {
                             Intent intent = new Intent(this, Indicators.class);
                             startActivity(intent);
+                        }
+                        else
+                        {
+                            file.delete();
                         }
 
                     }
@@ -89,7 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AppConfig.UserEmail = Email;
         UserPassword = (TextView) findViewById(R.id.Password);
         TypedPassword = UserPassword.getText().toString();
+        boolean pwCheck = false;
 
+        // No file or user not in DB - connect DB and get salt
         if (!AppConfig.UserExists[0]) {
             DBconnect db_users = new DBconnect();
             Salt = db_users.getUserSalt(Email, AppConfig.TABLE_USERS);
@@ -107,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
+            // If no user in DB -> create salt, hash password, place user in the DB, write file
             else
             {
                 Salt = BCrypt.gensalt(12);
@@ -120,10 +128,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        // User in DB, get hashed password, check, if correct write user to file
         else {
-            if (BCrypt.checkpw(TypedPassword, HashedPassword)) {
-                Intent intent = new Intent(this, Indicators.class);
-                startActivity(intent);
+            DBconnect db_users = new DBconnect();
+            HashedPassword = db_users.getUserPassword(Email, AppConfig.TABLE_USERS);
+            if (!HashedPassword.equals("NULL"))
+            {
+                pwCheck = BCrypt.checkpw(TypedPassword, HashedPassword);
+                if (pwCheck) {
+                    String UserString = Email + "--" + HashedPassword + "--" + Salt;
+                    WriteUserToFile(UserString);
+                    Intent intent = new Intent(this, Indicators.class);
+                    startActivity(intent);
+                }
             }
         }
 

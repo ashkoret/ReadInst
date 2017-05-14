@@ -14,6 +14,7 @@ public class AppConfig {
     public static final String TABLE_USERS = "ReadInstUsers";
     public static final String TABLE_USER_DEVS = "ReadInstUserDevs";
     public static final String USR_FILE = "current.usr";
+    public static final String DEV_FILE = "current.dev";
     public static String UserEmail = "";
     public static Boolean UserExists[] = {false, false};
 
