@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.constraint.ConstraintSet;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.support.v7.app.AppCompatActivity;
@@ -22,8 +21,11 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.readinst.barcode.BarcodeCaptureActivity;
 import com.readinst.dbconnector.DBconnect;
-import com.readinst.readinst.AddDevDialog;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -44,6 +46,25 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indicators);
 
+        // TODO Here we read DEV file
+        try {
+            File file = new File(this.getFilesDir(), AppConfig.DEV_FILE);
+            // Check file exists and read DEVs from file
+            if (file.exists()) {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String ReadString;
+                while (((ReadString = br.readLine()) != null)) {
+                   String[] RS = ReadString.split("-");
+                }
+                br.close();
+            }
+        }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+        //Here we read DEVs from DB
         HashMap<String, String> UserDevs;
         LinkedHashMap<String, String> DevIndicators;
         DBconnect db_users = new DBconnect();
@@ -99,7 +120,8 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                 }
             }
         }
-
+        // TODO Merge DEV file and DEV DB
+        // TODO Here write the DEV file
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
     }
@@ -148,16 +170,17 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
 
     @Override
     public void onDialogPositiveClick(String DevID , String simpleID) {
-        String sDevId = simpleID;
-        String devId = DevID;
+        // TODO write DB and DEV
+        DBconnect db_devs = new DBconnect();
+        db_devs.insertDevice(AppConfig.UserEmail, DevID, simpleID, AppConfig.TABLE_USER_DEVS);
+
+        Intent refresh = new Intent(this, Indicators.class);
+        startActivity(refresh);
+        this.finish(); //
     }
 
-    /*@Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
 
-    }*/
 // TODO return PC-ID and simple name to the list of the devices.
-// TODO Describe Log-off, Exit, Remove Manual add PC
+// TODO Describe Log-off, Exit
 
 }

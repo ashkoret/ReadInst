@@ -57,6 +57,24 @@ public class DBconnect {
         return result;
     }
 
+    public boolean insertDevice(String UserEmail, String Dev0, String DevName, String Table)
+    {
+        boolean result = false;
+        if (conn!=null) {
+            try {
+                PreparedStatement st = conn.prepareStatement("INSERT INTO " + Table + " (Email, Dev0, DevName) VALUES (?,?,?)");
+                st.setString(1, UserEmail);
+                st.setString(2, Dev0);
+                st.setString(3, DevName);
+                result = st.execute();
+                st.close();
+            } catch (SQLException s) {
+                Log.e(TAG, s.getMessage());
+            }
+        }
+        return result;
+    }
+
     public String getUserSalt(String UserEmail, String Table)
     {
         String Salt = "NULL";

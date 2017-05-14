@@ -11,10 +11,8 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 
@@ -29,7 +27,7 @@ public class AddDevDialog extends DialogFragment
     public interface AddDevDialogListener
     {
         void onDialogPositiveClick(String DevID, String simpleID);
-        //void onDialogNegativeClick(DialogFragment dialog);
+
     }
 
     AddDevDialogListener mListener;
