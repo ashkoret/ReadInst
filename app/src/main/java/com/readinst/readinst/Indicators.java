@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-
-
-
 public class Indicators extends AppCompatActivity implements AddDevDialog.AddDevDialogListener
 {
     private static final String LOG_TAG = Indicators.class.getSimpleName();
@@ -136,16 +133,36 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case R.id.AddPC:
-                Toast.makeText(Indicators.this, "Add PC using QR", Toast.LENGTH_SHORT).show();
+            case R.id.AddPCScan:
+                Toast.makeText(Indicators.this, getString(R.string.addPCscan), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
                 return true;
+            case R.id.AddPCLocal:
+                Toast.makeText(Indicators.this, getString(R.string.addPCphoto), Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.DeletePC:
+                Toast.makeText(Indicators.this, getString(R.string.deletePC), Toast.LENGTH_SHORT).show();
+                Intent delpc_intent = new Intent(this, DelDevDialog.class);
+                startActivity(delpc_intent);
+                return true;
             case R.id.Logout:
-                Toast.makeText(Indicators.this, "Log out", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Indicators.this, getString(R.string.logout), Toast.LENGTH_SHORT).show();
+                File file = new File(this.getFilesDir(), AppConfig.USR_FILE);
+                if (file.exists())
+                {
+                  file.delete();
+                }
+                Intent lintent = new Intent(this, MainActivity.class);
+                startActivity(lintent);
                 return true;
             case R.id.Exit:
-                Toast.makeText(Indicators.this, "Exit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Indicators.this, getString(R.string.exit), Toast.LENGTH_SHORT).show();
+                finishAffinity();
+                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                homeIntent.addCategory( Intent.CATEGORY_HOME );
+                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(homeIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -170,7 +187,7 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
 
     @Override
     public void onDialogPositiveClick(String DevID , String simpleID) {
-        // TODO write DB and DEV
+
         DBconnect db_devs = new DBconnect();
         db_devs.insertDevice(AppConfig.UserEmail, DevID, simpleID, AppConfig.TABLE_USER_DEVS);
 
@@ -178,9 +195,4 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         startActivity(refresh);
         this.finish(); //
     }
-
-
-// TODO return PC-ID and simple name to the list of the devices.
-// TODO Describe Log-off, Exit
-
 }

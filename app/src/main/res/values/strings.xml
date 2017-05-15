@@ -22,6 +22,11 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
 
-
+    <!-- Strings related to menu -->
+    <string name="addPCscan">"Add PC using QR-scan</string>
+    <string name="addPCphoto">"Add PC using QR-photo</string>
+    <string name="deletePC">Delete PC</string>
+    <string name="logout">Logout</string>
+    <string name="exit">Exit</string>
 
 </resources>
