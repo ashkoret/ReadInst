@@ -9,5 +9,8 @@ public class DelDevDialog extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_del_dev_dialog);
+        //TODO get list of the devices and create constrained layout with DEVs and checkboxes
+        //TODO add Cancel and Delete buttons and write delete function
+
     }
 }

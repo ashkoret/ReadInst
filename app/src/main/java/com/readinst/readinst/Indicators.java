@@ -2,10 +2,13 @@ package com.readinst.readinst;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.constraint.ConstraintSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,7 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.readinst.barcode.BarcodeCaptureActivity;
 import com.readinst.dbconnector.DBconnect;
 
@@ -140,7 +145,34 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                 return true;
             case R.id.AddPCLocal:
                 Toast.makeText(Indicators.this, getString(R.string.addPCphoto), Toast.LENGTH_SHORT).show();
+                try
+                {
+                    //TODO add function here to open file and read barcode
+                    Bitmap myQRCode = BitmapFactory.decodeStream(getAssets().open("myqrcode.jpg"));
+                    BarcodeDetector barcodeDetector =
+                            new BarcodeDetector.Builder(this)
+                                    .setBarcodeFormats(Barcode.QR_CODE)
+                                    .build();
+                    Frame myFrame = new Frame.Builder()
+                            .setBitmap(myQRCode)
+                            .build();
+                    SparseArray<Barcode> barcodes = barcodeDetector.detect(myFrame);
+                    // Check if at least one barcode was detected
+                    if(barcodes.size() != 0) {
+
+                        // Print the QR code's message
+                        Log.d("My QR Code's Data",
+                                barcodes.valueAt(0).displayValue
+                        );
+                    }
+                }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            //TODO end
                 return true;
+
             case R.id.DeletePC:
                 Toast.makeText(Indicators.this, getString(R.string.deletePC), Toast.LENGTH_SHORT).show();
                 Intent delpc_intent = new Intent(this, DelDevDialog.class);
