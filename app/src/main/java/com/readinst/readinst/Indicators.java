@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -221,17 +220,20 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         String QRCode = "";
         try {
             Bitmap myQRCode = getBitmapFromUri(uri);
-            BarcodeDetector barcodeDetector =
-                    new BarcodeDetector.Builder(this)
-                            .setBarcodeFormats(Barcode.QR_CODE)
-                            .build();
-            Frame myFrame = new Frame.Builder()
-                    .setBitmap(myQRCode)
-                    .build();
-            SparseArray<Barcode> barcodes = barcodeDetector.detect(myFrame);
-            // Check if at least one barcode was detected
-            if (barcodes.size() != 0) {
-                QRCode = barcodes.valueAt(0).toString();
+            if (myQRCode != null) {
+                BarcodeDetector barcodeDetector =
+                        new BarcodeDetector.Builder(this)
+                                .setBarcodeFormats(Barcode.QR_CODE)
+                                .build();
+                Frame myFrame = new Frame.Builder()
+                        .setBitmap(myQRCode)
+                        .build();
+                SparseArray<Barcode> barcodes = barcodeDetector.detect(myFrame);
+
+                // Check if at least one barcode was detected
+                if (barcodes.size() != 0) {
+                    QRCode = barcodes.valueAt(0).toString();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -251,7 +253,9 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         ParcelFileDescriptor parcelFileDescriptor =
                 getContentResolver().openFileDescriptor(uri, "r");
         FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inSampleSize = 1;
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, o);
         parcelFileDescriptor.close();
         return image;
     }
