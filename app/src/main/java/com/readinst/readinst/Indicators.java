@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.graphics.Point;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.support.constraint.ConstraintSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -29,18 +32,20 @@ import com.readinst.dbconnector.DBconnect;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class Indicators extends AppCompatActivity implements AddDevDialog.AddDevDialogListener
-{
+public class Indicators extends AppCompatActivity implements AddDevDialog.AddDevDialogListener {
     private static final String LOG_TAG = Indicators.class.getSimpleName();
     private static final int BARCODE_READER_REQUEST_CODE = 1;
     static int totalEditTexts = 0;
     LinearLayout IndicatorLayout;
+    private String QRfromPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +61,13 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 String ReadString;
                 while (((ReadString = br.readLine()) != null)) {
-                   String[] RS = ReadString.split("-");
+                    String[] RS = ReadString.split("-");
                 }
                 br.close();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
 
         //Here we read DEVs from DB
         HashMap<String, String> UserDevs;
@@ -75,8 +78,7 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         ArrayList<String> DevListNames = new ArrayList<>(UserDevs.keySet());
         ArrayList<ArrayList<String>> Indicators = new ArrayList<>();
         IndicatorLayout = (LinearLayout) findViewById(R.id.indicators);
-        for (int i = 0; i<DevList.size(); i++)
-        {
+        for (int i = 0; i < DevList.size(); i++) {
             String DeviceID = DevList.get(i);
             DevIndicators = db_users.readDeviceIndicators(DeviceID, AppConfig.TABLE_DEVICES);
             Indicators.add(new ArrayList<>(DevIndicators.values()));
@@ -85,34 +87,27 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         ConstraintSet set = new ConstraintSet();
         ArrayList<EditText> TextViews = new ArrayList<>();
 
-        for (int i = 0; i<DevList.size(); i++) {
+        for (int i = 0; i < DevList.size(); i++) {
             EditText editTextPC = new EditText(getBaseContext());
             editTextPC.setText(DevListNames.get(i));
-            editTextPC.setTextColor(Color.rgb(0,0,152));
+            editTextPC.setTextColor(Color.rgb(0, 0, 152));
             editTextPC.setGravity(Gravity.CENTER);
             editTextPC.setEnabled(false);
             TextViews.add(editTextPC);
             IndicatorLayout.addView(editTextPC);
-            for (int j = 0; j < Indicators.get(i).size(); j++)
-            {
-                String DevName = Indicators.get(i).get(j).replace("\r\n","").replace("\r","").replace("\n","");
+            for (int j = 0; j < Indicators.get(i).size(); j++) {
+                String DevName = Indicators.get(i).get(j).replace("\r\n", "").replace("\r", "").replace("\n", "");
 
-                if (!DevName.equals("0"))
-                {
+                if (!DevName.equals("0")) {
                     EditText editText = new EditText(getBaseContext());
                     editText.setEnabled(false);
                     editText.setTag("Indicator" + totalEditTexts);
-                    if (j == Math.ceil(j/6)*6)
-                    {
-                        editText.setTextColor(Color.rgb(152,0,0));
-                    }
-                    else if ((j-1) == Math.ceil((j-1)/6)*6)
-                    {
-                        editText.setTextColor(Color.rgb(0,102,0));
-                    }
-                    else
-                    {
-                        editText.setTextColor(Color.rgb(64,64,64));
+                    if (j == Math.ceil(j / 6) * 6) {
+                        editText.setTextColor(Color.rgb(152, 0, 0));
+                    } else if ((j - 1) == Math.ceil((j - 1) / 6) * 6) {
+                        editText.setTextColor(Color.rgb(0, 102, 0));
+                    } else {
+                        editText.setTextColor(Color.rgb(64, 64, 64));
                     }
                     editText.setId(i * 6 + j);
                     editText.setText(DevName);
@@ -129,15 +124,15 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
     }
 
     @Override
-    public boolean onCreateOptionsMenu (Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.AddPCScan:
                 Toast.makeText(Indicators.this, getString(R.string.addPCscan), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
@@ -145,34 +140,8 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                 return true;
             case R.id.AddPCLocal:
                 Toast.makeText(Indicators.this, getString(R.string.addPCphoto), Toast.LENGTH_SHORT).show();
-                try
-                {
-                    //TODO add function here to open file and read barcode
-                    Bitmap myQRCode = BitmapFactory.decodeStream(getAssets().open("myqrcode.jpg"));
-                    BarcodeDetector barcodeDetector =
-                            new BarcodeDetector.Builder(this)
-                                    .setBarcodeFormats(Barcode.QR_CODE)
-                                    .build();
-                    Frame myFrame = new Frame.Builder()
-                            .setBitmap(myQRCode)
-                            .build();
-                    SparseArray<Barcode> barcodes = barcodeDetector.detect(myFrame);
-                    // Check if at least one barcode was detected
-                    if(barcodes.size() != 0) {
-
-                        // Print the QR code's message
-                        Log.d("My QR Code's Data",
-                                barcodes.valueAt(0).displayValue
-                        );
-                    }
-                }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            //TODO end
+                addPCfromPhoto();
                 return true;
-
             case R.id.DeletePC:
                 Toast.makeText(Indicators.this, getString(R.string.deletePC), Toast.LENGTH_SHORT).show();
                 Intent delpc_intent = new Intent(this, DelDevDialog.class);
@@ -180,21 +149,11 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                 return true;
             case R.id.Logout:
                 Toast.makeText(Indicators.this, getString(R.string.logout), Toast.LENGTH_SHORT).show();
-                File file = new File(this.getFilesDir(), AppConfig.USR_FILE);
-                if (file.exists())
-                {
-                  file.delete();
-                }
-                Intent lintent = new Intent(this, MainActivity.class);
-                startActivity(lintent);
+                doLogOut();
                 return true;
             case R.id.Exit:
                 Toast.makeText(Indicators.this, getString(R.string.exit), Toast.LENGTH_SHORT).show();
-                finishAffinity();
-                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                homeIntent.addCategory( Intent.CATEGORY_HOME );
-                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(homeIntent);
+                goHome();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -211,14 +170,20 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                     Toast.makeText(Indicators.this, barcode.displayValue, Toast.LENGTH_SHORT).show();
                     DialogFragment addDevDialog = AddDevDialog.newInstance(barcode.displayValue);
                     addDevDialog.show(getFragmentManager(), "addDevDialog");
-                } else Toast.makeText(Indicators.this, R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(Indicators.this, R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));
         } else super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 123 && resultCode == RESULT_OK) {
+
+            QRfromPhoto = QRfromPhoto(data.getData());
+            Toast.makeText(Indicators.this, QRfromPhoto, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    public void onDialogPositiveClick(String DevID , String simpleID) {
+    public void onDialogPositiveClick(String DevID, String simpleID) {
 
         DBconnect db_devs = new DBconnect();
         db_devs.insertDevice(AppConfig.UserEmail, DevID, simpleID, AppConfig.TABLE_USER_DEVS);
@@ -227,4 +192,68 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         startActivity(refresh);
         this.finish(); //
     }
+
+    protected void goHome() {
+        finishAffinity();
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
+    }
+
+    protected void doLogOut() {
+        File file = new File(this.getFilesDir(), AppConfig.USR_FILE);
+        if (file.exists()) {
+            file.delete();
+        }
+        Intent lintent = new Intent(this, MainActivity.class);
+        startActivity(lintent);
+    }
+
+    protected void addPCfromPhoto() {
+        Intent openfile = new Intent()
+                .setType("*/*")
+                .setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(openfile, "Select a file"), 123);
+    }
+
+    protected String QRfromPhoto(Uri uri) {
+        String QRCode = "";
+        try {
+            Bitmap myQRCode = getBitmapFromUri(uri);
+            BarcodeDetector barcodeDetector =
+                    new BarcodeDetector.Builder(this)
+                            .setBarcodeFormats(Barcode.QR_CODE)
+                            .build();
+            Frame myFrame = new Frame.Builder()
+                    .setBitmap(myQRCode)
+                    .build();
+            SparseArray<Barcode> barcodes = barcodeDetector.detect(myFrame);
+            // Check if at least one barcode was detected
+            if (barcodes.size() != 0) {
+                QRCode = barcodes.valueAt(0).toString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return QRCode;
+    }
+
+    /*private Bitmap getBitmapFromUri(Uri uri) throws IOException
+    {
+        InputStream is = getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(is);
+        is.close();
+        return bitmap;
+    }*/
+
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
 }
+
