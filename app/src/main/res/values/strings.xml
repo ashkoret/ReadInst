@@ -5,6 +5,13 @@
     <string name="scan_barcode_button">Scan barcode</string>
     <string name="no_barcode_captured">No barcode captured</string>
     <string name="barcode_error_format">"Error reading barcode: %1$s"</string>
+    <string name="barcode_service_down">"BarcodeDetector service is down"</string>
+    <string name="barcode_empty">"Barcode empty"</string>
+
+    <!-- Strings related to barcode scanner -->
+    <string name="no_barcode_detected">No barcode detected</string>
+
+
 
     <!-- Strings related to barcode scanner -->
     <string name="ok">OK</string>

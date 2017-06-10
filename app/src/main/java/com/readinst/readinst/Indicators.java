@@ -217,22 +217,34 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
     }
 
     protected String QRfromPhoto(Uri uri) {
-        String QRCode = "";
+        String QRCode = getString(R.string.no_barcode_detected);
         try {
             Bitmap myQRCode = getBitmapFromUri(uri);
-            if (myQRCode != null) {
+            if (myQRCode != null ) {
                 BarcodeDetector barcodeDetector =
                         new BarcodeDetector.Builder(this)
                                 .setBarcodeFormats(Barcode.QR_CODE)
                                 .build();
-                Frame myFrame = new Frame.Builder()
+
+                if (barcodeDetector.isOperational())
+                {
+                    Frame myFrame = new Frame.Builder()
                         .setBitmap(myQRCode)
                         .build();
-                SparseArray<Barcode> barcodes = barcodeDetector.detect(myFrame);
-
-                // Check if at least one barcode was detected
-                if (barcodes.size() != 0) {
-                    QRCode = barcodes.valueAt(0).toString();
+                    SparseArray<Barcode> barcodes = barcodeDetector.detect(myFrame);
+                    
+                    // Check if at least one barcode was detected
+                    if (barcodes.size() != 0) {
+                       QRCode = barcodes.valueAt(0).toString();
+                    }
+                    else
+                    {
+                        QRCode = getString(R.string.barcode_empty);
+                    }
+                }
+                else
+                {
+                    QRCode = getString(R.string.barcode_service_down);
                 }
             }
         } catch (IOException e) {
@@ -253,9 +265,12 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         ParcelFileDescriptor parcelFileDescriptor =
                 getContentResolver().openFileDescriptor(uri, "r");
         FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inSampleSize = 1;
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, o);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 1;
+        options.inScaled = false;
+        options.inDither = false;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
         parcelFileDescriptor.close();
         return image;
     }
