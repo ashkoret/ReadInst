@@ -179,6 +179,7 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
 
             QRfromPhoto = QRfromPhoto(data.getData());
             Toast.makeText(Indicators.this, QRfromPhoto, Toast.LENGTH_SHORT).show();
+            // TODO add device dialog
         }
     }
 
