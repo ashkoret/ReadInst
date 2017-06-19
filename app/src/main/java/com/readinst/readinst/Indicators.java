@@ -221,10 +221,6 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         try {
             Bitmap myQRCode = getBitmapFromUri(uri);
 
-            /*myQRCode = BitmapFactory.decodeResource(
-                    getApplicationContext().getResources(),
-                    R.drawable.qr1);*/
-
             if (myQRCode != null ) {
                 BarcodeDetector barcodeDetector =
                         new BarcodeDetector.Builder(this)
