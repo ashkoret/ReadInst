@@ -4,10 +4,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Color;
-import android.graphics.Path;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.support.constraint.ConstraintSet;
@@ -45,7 +42,6 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
     private static final int BARCODE_READER_REQUEST_CODE = 1;
     static int totalEditTexts = 0;
     LinearLayout IndicatorLayout;
-    private String QRfromPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,9 +162,9 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                    Point[] p = barcode.cornerPoints;
-                    Toast.makeText(Indicators.this, barcode.displayValue, Toast.LENGTH_SHORT).show();
-                    DialogFragment addDevDialog = AddDevDialog.newInstance(barcode.displayValue);
+                    String QRfromCamera = barcode.displayValue;
+                    Toast.makeText(Indicators.this, QRfromCamera, Toast.LENGTH_SHORT).show();
+                    DialogFragment addDevDialog = AddDevDialog.newInstance(QRfromCamera);
                     addDevDialog.show(getFragmentManager(), "addDevDialog");
                 } else
                     Toast.makeText(Indicators.this, R.string.no_barcode_captured, Toast.LENGTH_SHORT).show();
@@ -177,8 +173,10 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         } else super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
 
-            QRfromPhoto = QRfromPhoto(data.getData());
+            String QRfromPhoto = QRfromPhoto(data.getData());
             Toast.makeText(Indicators.this, QRfromPhoto, Toast.LENGTH_SHORT).show();
+            DialogFragment addDevDialog = AddDevDialog.newInstance(QRfromPhoto);
+            addDevDialog.show(getFragmentManager(), "addDevDialog");
             // TODO add device dialog
         }
     }
@@ -242,7 +240,7 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                     
                     // Check if at least one barcode was detected
                     if (barcodes.size() != 0) {
-                       QRCode = barcodes.valueAt(0).rawValue.toString();
+                       QRCode = barcodes.valueAt(0).rawValue;
                     }
                     else
                     {
