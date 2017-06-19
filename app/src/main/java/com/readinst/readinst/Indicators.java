@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -220,6 +221,11 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         String QRCode = getString(R.string.no_barcode_detected);
         try {
             Bitmap myQRCode = getBitmapFromUri(uri);
+
+            /*myQRCode = BitmapFactory.decodeResource(
+                    getApplicationContext().getResources(),
+                    R.drawable.qr1);*/
+
             if (myQRCode != null ) {
                 BarcodeDetector barcodeDetector =
                         new BarcodeDetector.Builder(this)
@@ -235,7 +241,7 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                     
                     // Check if at least one barcode was detected
                     if (barcodes.size() != 0) {
-                       QRCode = barcodes.valueAt(0).toString();
+                       QRCode = barcodes.valueAt(0).rawValue.toString();
                     }
                     else
                     {
@@ -246,6 +252,7 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
                 {
                     QRCode = getString(R.string.barcode_service_down);
                 }
+                barcodeDetector.release();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -253,20 +260,12 @@ public class Indicators extends AppCompatActivity implements AddDevDialog.AddDev
         return QRCode;
     }
 
-    /*private Bitmap getBitmapFromUri(Uri uri) throws IOException
-    {
-        InputStream is = getContentResolver().openInputStream(uri);
-        Bitmap bitmap = BitmapFactory.decodeStream(is);
-        is.close();
-        return bitmap;
-    }*/
-
     private Bitmap getBitmapFromUri(Uri uri) throws IOException {
         ParcelFileDescriptor parcelFileDescriptor =
                 getContentResolver().openFileDescriptor(uri, "r");
         FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 1;
+        options.inSampleSize = 8;
         options.inScaled = false;
         options.inDither = false;
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
